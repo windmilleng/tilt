@@ -332,6 +332,18 @@ export function HUDFromContext(props: React.PropsWithChildren<{}>) {
   return <HUD history={history} interfaceVersion={interfaceVersion} />
 }
 
+function compareObjects(a: any, b: any): number {
+  let aOrder = a.status?.order || 0
+  let bOrder = b.status?.order || 0
+  if (aOrder != bOrder) {
+    return aOrder - bOrder
+  }
+
+  let aName = a.metadata?.name || ""
+  let bName = a.metadata?.name || ""
+  return aName < bName ? -1 : aName == bName ? 0 : 1
+}
+
 // returns a copy of `prev` that has the adds/updates/deletes from `updates` applied
 function mergeObjectUpdates<T extends { metadata?: Proto.v1ObjectMeta }>(
   updates: T[] | undefined,
@@ -349,6 +361,8 @@ function mergeObjectUpdates<T extends { metadata?: Proto.v1ObjectMeta }>(
     })
     next = next.filter((o) => !o?.metadata?.deletionTimestamp)
   }
+
+  next.sort(compareObjects)
 
   return next
 }
