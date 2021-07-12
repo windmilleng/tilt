@@ -93,6 +93,7 @@ func (s *tiltfileState) dcResource(thread *starlark.Thread, fn *starlark.Builtin
 	var triggerMode triggerMode
 	var resourceDepsVal starlark.Sequence
 	var links links.LinkList
+	var labels value.LabelOrLabelList
 
 	if err := s.unpackArgs(fn.Name(), args, kwargs,
 		"name", &name,
@@ -109,6 +110,7 @@ func (s *tiltfileState) dcResource(thread *starlark.Thread, fn *starlark.Builtin
 		"trigger_mode?", &triggerMode,
 		"resource_deps?", &resourceDepsVal,
 		"links?", &links,
+		"labels?", &labels,
 	); err != nil {
 		return nil, err
 	}
@@ -134,6 +136,8 @@ func (s *tiltfileState) dcResource(thread *starlark.Thread, fn *starlark.Builtin
 
 	svc.TriggerMode = triggerMode
 	svc.Links = links.Links
+
+	svc.Labels = labels.Values // (lizz): do labels need to be passed to the service?
 
 	if imageRefAsStr != nil {
 		normalized, err := container.ParseNamed(*imageRefAsStr)
@@ -187,6 +191,8 @@ type dcService struct {
 
 	TriggerMode triggerMode
 	Links       []model.Link
+
+	Labels       []string
 
 	resourceDeps []string
 }
