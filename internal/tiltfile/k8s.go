@@ -61,6 +61,8 @@ type k8sResource struct {
 	manuallyGrouped bool
 
 	links []model.Link
+
+	labels []string
 }
 
 // holds options passed to `k8s_resource` until assembly happens
@@ -77,6 +79,7 @@ type k8sResourceOptions struct {
 	manuallyGrouped   bool
 	podReadinessMode  model.PodReadinessMode
 	links             []model.Link
+	labels            []string
 }
 
 func (r *k8sResource) addEntities(entities []k8s.K8sEntity,
@@ -263,6 +266,7 @@ func (s *tiltfileState) k8sResource(thread *starlark.Thread, fn *starlark.Builti
 	var objectsVal starlark.Sequence
 	var podReadinessMode tiltfile_k8s.PodReadinessMode
 	var links links.LinkList
+	var labels value.LabelOrLabelList
 	autoInit := true
 
 	if err := s.unpackArgs(fn.Name(), args, kwargs,
@@ -276,6 +280,7 @@ func (s *tiltfileState) k8sResource(thread *starlark.Thread, fn *starlark.Builti
 		"auto_init?", &autoInit,
 		"pod_readiness?", &podReadinessMode,
 		"links?", &links,
+		"labels?", &labels,
 	); err != nil {
 		return nil, err
 	}
@@ -334,6 +339,7 @@ func (s *tiltfileState) k8sResource(thread *starlark.Thread, fn *starlark.Builti
 		manuallyGrouped:   manuallyGrouped,
 		podReadinessMode:  podReadinessMode.Value,
 		links:             links.Links,
+		labels:            labels.Values,
 	}
 
 	return starlark.None, nil

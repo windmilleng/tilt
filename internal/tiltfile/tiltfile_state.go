@@ -701,6 +701,7 @@ func (s *tiltfileState) assembleK8s() error {
 			r.autoInit = opts.autoInit
 			r.resourceDeps = opts.resourceDeps
 			r.links = opts.links
+			r.labels = opts.labels
 			if opts.newName != "" && opts.newName != r.name {
 				if _, ok := s.k8sByName[opts.newName]; ok {
 					return fmt.Errorf("k8s_resource at %s specified to rename %q to %q, but there already exists a resource with that name", opts.tiltfilePosition.String(), r.name, opts.newName)
@@ -1030,6 +1031,7 @@ func (s *tiltfileState) translateK8s(resources []*k8sResource, updateSettings mo
 			Name:                 mn,
 			TriggerMode:          tm,
 			ResourceDependencies: mds,
+			Labels:               r.labels,
 		}
 
 		k8sTarget, err := k8s.NewTarget(mn.TargetName(), r.entities,
