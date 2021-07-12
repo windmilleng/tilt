@@ -1,10 +1,8 @@
 // Helper functions for working with labels
 
-type UILabels = Pick<Proto.v1ObjectMeta, "labels">
-
 // TODO (LT): Add a lil' explanation here about k8s use of labels
 // and why we filter out labels with prefixes
-export function getUiLabels({ labels }: UILabels) {
+export function getUiLabels({ labels }: any) {
   if (!labels) {
     return []
   }
